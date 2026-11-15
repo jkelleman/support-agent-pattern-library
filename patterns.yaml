@@ -1,0 +1,86 @@
+# Machine-readable registry of conversation patterns.
+# Engineers and eval pipelines read this file; designers edit the markdown.
+# `scripts/validate_patterns.py` checks that this registry and the pattern
+# files stay in sync.
+
+version: 1.0.0
+required_sections:
+  - When to use
+  - Member need
+  - Turn structure
+  - Example
+  - Anti-pattern
+  - Failure modes
+  - Measure it
+  - Prompt fragment
+
+patterns:
+  - id: clarify-ambiguous-intent
+    file: patterns/clarify-ambiguous-intent.md
+    category: understanding
+    risk: low
+    channels: [chat, voice]
+    eval_criteria: [resolves_intent, concise]
+
+  - id: context-carryover
+    file: patterns/context-carryover.md
+    category: understanding
+    risk: medium
+    channels: [chat, voice]
+    eval_criteria: [no_repeat_ask, safe_account_handling]
+
+  - id: proactive-known-issue
+    file: patterns/proactive-known-issue.md
+    category: understanding
+    risk: medium
+    channels: [chat, voice]
+    eval_criteria: [factually_grounded, resolves_intent]
+
+  - id: confirm-before-action
+    file: patterns/confirm-before-action.md
+    category: action
+    risk: high
+    channels: [chat, voice]
+    eval_criteria: [factually_grounded, safe_account_handling]
+
+  - id: verify-before-sensitive-info
+    file: patterns/verify-before-sensitive-info.md
+    category: action
+    risk: high
+    channels: [chat, voice]
+    eval_criteria: [safe_account_handling]
+
+  - id: respectful-cancellation
+    file: patterns/respectful-cancellation.md
+    category: action
+    risk: high
+    channels: [chat, voice]
+    eval_criteria: [brand_voice, resolves_intent, factually_grounded]
+
+  - id: recover-from-misunderstanding
+    file: patterns/recover-from-misunderstanding.md
+    category: recovery
+    risk: medium
+    channels: [chat, voice]
+    eval_criteria: [no_repeat_ask, empathy_appropriate]
+
+  - id: graceful-no-answer
+    file: patterns/graceful-no-answer.md
+    category: recovery
+    risk: high
+    channels: [chat, voice]
+    eval_criteria: [factually_grounded, resolves_intent]
+
+  - id: escalate-to-human
+    file: patterns/escalate-to-human.md
+    category: handoff
+    risk: high
+    channels: [chat, voice]
+    eval_criteria: [correct_escalation]
+
+  - id: warm-handoff
+    file: patterns/warm-handoff.md
+    category: handoff
+    risk: medium
+    channels: [chat, voice]
+    eval_criteria: [correct_escalation, no_repeat_ask]
