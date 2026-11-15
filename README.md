@@ -1,4 +1,14 @@
+<p align="center"><img src="assets/banner.png" alt="Support Agent Pattern Library banner: conversation design patterns for AI customer support" width="100%"></p>
+
 # Support Agent Pattern Library: Conversation Design Patterns for AI Customer Support Agents
+
+[![Validate patterns](https://github.com/jkelleman/support-agent-pattern-library/actions/workflows/validate.yml/badge.svg)](https://github.com/jkelleman/support-agent-pattern-library/actions/workflows/validate.yml)
+![patterns: 10](https://img.shields.io/badge/patterns-10-ff8a70)
+![channels: chat + voice](https://img.shields.io/badge/channels-chat%20%2B%20voice-54d2c0)
+![focus: conversation design](https://img.shields.io/badge/focus-conversation%20design-3b3690)
+![Python 3.12](https://img.shields.io/badge/python-3.12-3776AB?logo=python&logoColor=white)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![Built by Jen Kelleman](https://img.shields.io/badge/built%20by-Jen%20Kelleman-555555?logo=github&logoColor=white)](https://github.com/jkelleman)
 
 Reusable conversation patterns for an AI customer-support agent at a global streaming service. Each pattern covers when to use it, how the turns go, a good and a bad example, how it fails in production, how to measure it, and the prompt text an engineer can ship.
 
