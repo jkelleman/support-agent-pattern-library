@@ -1,4 +1,4 @@
-# Support Agent Pattern Library
+# Support Agent Pattern Library: Conversation Design Patterns for AI Customer Support Agents
 
 Reusable conversation patterns for an AI customer-support agent at a global streaming service. Each pattern covers when to use it, how the turns go, a good and a bad example, how it fails in production, how to measure it, and the prompt text an engineer can ship.
 
