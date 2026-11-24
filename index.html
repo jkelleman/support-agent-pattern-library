@@ -70,7 +70,7 @@
 <script type="module">
 import * as yaml from "./assets/vendor/js-yaml.mjs";
 import { marked } from "./assets/vendor/marked.esm.js";
-import { trackTabs, text, esc } from "./assets/tabs.js";
+import { trackTabs, text, esc, renderMd } from "./assets/tabs.js";
 
 const reg = yaml.load(await text("patterns.yaml"));
 const pats = await Promise.all(reg.patterns.map(async (p) => {
@@ -133,7 +133,7 @@ document.getElementById("copy").addEventListener("click", async (e) => {
   try { await navigator.clipboard.writeText(document.getElementById("prompt").textContent); e.target.textContent = "Copied"; setTimeout(() => (e.target.textContent = "Copy prompt"), 1500); } catch {}
 });
 
-await Promise.all([...document.querySelectorAll("[data-md]")].map(async (el) => { el.innerHTML = marked.parse(await text(el.dataset.md)); }));
+await Promise.all([...document.querySelectorAll("[data-md]")].map((el) => renderMd(el, marked, "support-agent-pattern-library")));
 trackTabs();
 </script>
 </body>

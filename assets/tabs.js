@@ -18,3 +18,22 @@ export async function text(path) {
 }
 
 export const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+
+// Renders a repo Markdown file into el. Relative links point at the file on GitHub,
+// resolved from the Markdown file's own folder, so they never break on the Pages site.
+export async function renderMd(el, marked, repo) {
+  const path = el.dataset.md;
+  el.innerHTML = marked.parse(await text(path));
+  const base = new URL(path, "https://x.invalid/");
+  for (const a of el.querySelectorAll("a[href]")) {
+    const href = a.getAttribute("href");
+    if (/^([a-z]+:|#|\/\/)/i.test(href)) continue;
+    const u = new URL(href, base);
+    a.href = `https://github.com/jkelleman/${repo}/blob/main${u.pathname}${u.hash}`;
+  }
+  for (const img of el.querySelectorAll("img[src]")) {
+    const src = img.getAttribute("src");
+    if (/^([a-z]+:|\/\/)/i.test(src)) continue;
+    img.src = new URL(src, new URL(path, location.href)).href;
+  }
+}
