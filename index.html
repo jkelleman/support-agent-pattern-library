@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Support Agent Pattern Library · Jen Kelleman</title>
+<meta name="description" content="Ten conversation design patterns for an AI support agent: clarify, confirm, recover, escalate and hand off. Each with turn structure, examples, failure modes, metrics and a prompt fragment.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono&family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+<style>
+.lib { display: grid; gap: 24px; }
+@media (min-width: 960px) { .lib { grid-template-columns: 320px 1fr; align-items: start; } .list { position: sticky; top: 76px; } }
+.list { display: flex; flex-direction: column; gap: 8px; }
+.pat { text-align: left; font: inherit; background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 12px 14px; cursor: pointer; color: var(--ink); }
+.pat:hover { border-color: var(--ink); }
+.pat[aria-current="true"] { border-color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
+.pat .n { font-weight: 600; font-size: 15px; line-height: 1.3; display: block; }
+.pat .m { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+.detail { min-height: 400px; }
+.detail .meta { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 0; }
+.detail h3.title { font-family: var(--serif); font-weight: 400; font-size: 32px; line-height: 1.15; margin: 0; }
+.prose blockquote strong { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--graphite); font-weight: 500; }
+.builder { display: grid; gap: 20px; }
+@media (min-width: 960px) { .builder { grid-template-columns: 320px 1fr; } }
+.builder label { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--rule); font-size: 15px; cursor: pointer; }
+.builder .grp { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--graphite); margin: 16px 0 2px; }
+#prompt { background: #1b1b1f; color: #f4f4f2; border-radius: 14px; padding: 18px; font: 13px/1.6 var(--mono); white-space: pre-wrap; margin: 0; min-height: 300px; }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="name" href="https://aiwithjen.com">Jen Kelleman</a>
+  <nav><a href="https://aiwithjen.com/code">Prototypes</a><a href="https://github.com/jkelleman/support-agent-pattern-library">Code on GitHub</a></nav>
+</div></header>
+
+<main>
+<div class="wrap hero">
+  <p class="label">Support Agent Pattern Library</p>
+  <h1>What a support agent says, <em>turn by turn.</em></h1>
+  <p class="lede">Ten conversation design patterns for an AI customer-support agent. Each one names the member's need, the turn structure, a good and a bad example, how it fails, how to measure it, and the prompt fragment that puts it into the model.</p>
+  <ul class="facts"><li><b>10</b> patterns</li><li><b>5</b> principles</li><li>chat and voice</li><li>validated in CI</li></ul>
+  <div class="cta"><a class="btn primary" href="#patterns">Browse the patterns</a><a class="btn" href="#builder">Build a system prompt</a><a class="btn" href="https://github.com/jkelleman/support-agent-pattern-library">View the code</a></div>
+  <p class="note">Independent portfolio project, written for a fictional streaming service. Not affiliated with any company.</p>
+</div>
+
+<nav class="tabs" aria-label="Sections"><div class="wrap">
+  <a href="#patterns">Patterns</a><a href="#builder">Prompt builder</a><a href="#principles">Principles</a><a href="#template">Pattern template</a>
+</div></nav>
+
+<section class="block" id="patterns"><div class="wrap">
+  <h2>Patterns</h2>
+  <p class="sub">Filter by the job the pattern does. High-risk patterns guard money, access and the member's data.</p>
+  <div class="chips" role="group" aria-label="Category" id="cats"></div>
+  <div class="lib"><div class="list" id="list"></div><article class="card detail" id="detail" aria-live="polite"></article></div>
+</div></section>
+
+<section class="block" id="builder"><div class="wrap">
+  <h2>Prompt builder</h2>
+  <p class="sub">Pick patterns and the fragments assemble in the order that held up best in testing: safety first, then grounding, mechanics, situations and the handoff.</p>
+  <div class="builder"><div id="picks"></div><div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span class="muted mono" id="count"></span><button class="chip" id="copy">Copy prompt</button></div><pre id="prompt"></pre></div></div>
+</div></section>
+
+<section class="block" id="principles"><div class="wrap"><h2>Principles</h2><div class="prose" data-md="docs/principles.md"></div></div></section>
+<section class="block" id="template"><div class="wrap"><h2>Pattern template</h2><div class="prose" data-md="templates/pattern-template.md"></div></div></section>
+</main>
+
+<footer><div class="wrap"><span>Built by <a href="https://aiwithjen.com">Jen Kelleman</a>, content designer for AI.</span><a href="https://github.com/jkelleman/support-agent-pattern-library">Source on GitHub</a></div></footer>
+
+<script type="module">
+import * as yaml from "./assets/vendor/js-yaml.mjs";
+import { marked } from "./assets/vendor/marked.esm.js";
+import { trackTabs, text, esc } from "./assets/tabs.js";
+
+const reg = yaml.load(await text("patterns.yaml"));
+const pats = await Promise.all(reg.patterns.map(async (p) => {
+  const raw = await text(p.file);
+  const m = raw.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+  const front = m ? yaml.load(m[1]) : {};
+  const body = m ? m[2] : raw;
+  const frag = (body.match(/## Prompt fragment[\s\S]*?```(?:text)?\n([\s\S]*?)```/) || [])[1]?.trim() || "";
+  return { ...p, name: front.name || p.id, body, frag };
+}));
+const byId = Object.fromEntries(pats.map((p) => [p.id, p]));
+const riskTag = (r) => `<span class="tag ${r === "high" ? "no" : r === "medium" ? "warn" : "ok"}">${r} risk</span>`;
+
+const cats = ["all", ...new Set(pats.map((p) => p.category))];
+const catsEl = document.getElementById("cats");
+catsEl.innerHTML = cats.map((c) => `<button class="chip" aria-pressed="${c === "all"}" data-c="${c}">${c === "all" ? "All" : c[0].toUpperCase() + c.slice(1)}</button>`).join("");
+let cat = "all", cur = location.hash.startsWith("#p-") ? location.hash.slice(3) : "confirm-before-action";
+
+function renderList() {
+  const shown = pats.filter((p) => cat === "all" || p.category === cat);
+  document.getElementById("list").innerHTML = shown.map((p) => `<button class="pat" data-id="${p.id}" aria-current="${p.id === cur}">
+    <span class="n">${esc(p.name)}</span><span class="m"><span class="tag">${p.category}</span>${riskTag(p.risk)}</span></button>`).join("");
+}
+function renderDetail() {
+  const p = byId[cur] || pats[0];
+  document.getElementById("detail").innerHTML = `<h3 class="title">${esc(p.name)}</h3>
+    <div class="meta"><span class="tag">${p.category}</span>${riskTag(p.risk)}${p.channels.map((c) => `<span class="tag">${c}</span>`).join("")}${p.eval_criteria.map((c) => `<span class="tag ok">${c}</span>`).join("")}</div>
+    <div class="prose">${marked.parse(p.body)}</div>
+    <p class="mono"><a href="https://github.com/jkelleman/support-agent-pattern-library/blob/main/${p.file}">${p.file}</a></p>`;
+}
+catsEl.addEventListener("click", (e) => {
+  const b = e.target.closest("button"); if (!b) return; cat = b.dataset.c;
+  catsEl.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", x === b)); renderList();
+});
+document.getElementById("list").addEventListener("click", (e) => {
+  const b = e.target.closest(".pat"); if (!b) return; cur = b.dataset.id;
+  history.replaceState(null, "", "#p-" + cur); renderList(); renderDetail();
+  if (innerWidth < 960) document.getElementById("detail").scrollIntoView({ behavior: "smooth" });
+});
+renderList(); renderDetail();
+if (location.hash.startsWith("#p-")) document.getElementById("patterns").scrollIntoView();
+
+const ORDER = [
+  ["Safety", ["verify-before-sensitive-info", "escalate-to-human"]],
+  ["Grounding", ["graceful-no-answer", "confirm-before-action"]],
+  ["Conversation mechanics", ["context-carryover", "clarify-ambiguous-intent", "recover-from-misunderstanding"]],
+  ["Situations", ["proactive-known-issue", "respectful-cancellation"]],
+  ["Handoff", ["warm-handoff"]],
+];
+const picks = document.getElementById("picks");
+picks.innerHTML = ORDER.map(([g, ids]) => `<div class="grp">${g}</div>` + ids.filter((id) => byId[id]).map((id) =>
+  `<label><input type="checkbox" value="${id}" checked> ${esc(byId[id].name)}</label>`).join("")).join("");
+function build() {
+  const on = [...picks.querySelectorAll("input:checked")].map((i) => i.value);
+  document.getElementById("prompt").textContent = on.map((id) => `# ${byId[id].name}\n${byId[id].frag}`).join("\n\n") || "Pick at least one pattern.";
+  document.getElementById("count").textContent = `${on.length} of ${pats.length} patterns`;
+}
+picks.addEventListener("change", build); build();
+document.getElementById("copy").addEventListener("click", async (e) => {
+  try { await navigator.clipboard.writeText(document.getElementById("prompt").textContent); e.target.textContent = "Copied"; setTimeout(() => (e.target.textContent = "Copy prompt"), 1500); } catch {}
+});
+
+await Promise.all([...document.querySelectorAll("[data-md]")].map(async (el) => { el.innerHTML = marked.parse(await text(el.dataset.md)); }));
+trackTabs();
+</script>
+</body>
+</html>

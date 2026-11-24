@@ -2,6 +2,9 @@
 
 # Support Agent Pattern Library: Conversation Design Patterns for AI Customer Support Agents
 
+**[Live pattern library](https://jkelleman.github.io/support-agent-pattern-library/)**: browse all ten patterns and assemble a system prompt from their fragments.
+
+
 [![Validate patterns](https://github.com/jkelleman/support-agent-pattern-library/actions/workflows/validate.yml/badge.svg)](https://github.com/jkelleman/support-agent-pattern-library/actions/workflows/validate.yml)
 ![patterns: 10](https://img.shields.io/badge/patterns-10-ff8a70)
 ![channels: chat + voice](https://img.shields.io/badge/channels-chat%20%2B%20voice-54d2c0)
