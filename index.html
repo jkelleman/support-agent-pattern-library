@@ -107,8 +107,10 @@ catsEl.addEventListener("click", (e) => {
 });
 document.getElementById("list").addEventListener("click", (e) => {
   const b = e.target.closest(".pat"); if (!b) return; cur = b.dataset.id;
-  history.replaceState(null, "", "#p-" + cur); renderList(); renderDetail();
-  if (innerWidth < 960) document.getElementById("detail").scrollIntoView({ behavior: "smooth" });
+  history.replaceState(null, "", "#p-" + cur);
+  document.querySelectorAll("#list .pat").forEach((x) => x.setAttribute("aria-current", x.dataset.id === cur));
+  renderDetail();
+  if (innerWidth < 960) document.getElementById("detail").scrollIntoView();
 });
 renderList(); renderDetail();
 if (location.hash.startsWith("#p-")) document.getElementById("patterns").scrollIntoView();

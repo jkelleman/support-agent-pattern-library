@@ -87,7 +87,7 @@ th { font-weight: 600; font-size: 13px; color: var(--graphite); }
 .prose :not(pre) > code { background: var(--card); border: 1px solid var(--rule); border-radius: 5px; padding: 0 4px; }
 .prose table { background: var(--card); border: 1px solid var(--rule); border-radius: 12px; display: block; overflow-x: auto; }
 
-.bubble { border-radius: 14px; padding: 10px 14px; max-width: 85%; white-space: pre-line; font-size: 15px; }
+.bubble { overflow-wrap: anywhere; border-radius: 14px; padding: 10px 14px; max-width: 85%; white-space: pre-line; font-size: 15px; }
 .bubble.member { background: var(--bg); border: 1px solid var(--rule); margin-right: auto; }
 .bubble.agent { background: var(--accent-soft); border: 1px solid #d6ddfb; margin-left: auto; }
 .convo { display: flex; flex-direction: column; gap: 8px; }
@@ -96,3 +96,6 @@ th { font-weight: 600; font-size: 13px; color: var(--graphite); }
 footer { margin-top: 96px; border-top: 1px solid var(--rule); padding: 28px 0 48px; font-size: 14px; color: var(--graphite); }
 footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+/* Grid children may shrink below their content, so long code scrolls inside its own block. */
+.lib > *, .play > *, .builder > *, .grid > * { min-width: 0; }
+#detail { scroll-margin-top: 76px; }
